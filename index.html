@@ -18,6 +18,8 @@
     --brand-soft: #ddf4ff;
     --code-bg: #f6f8fa;
     --shadow: 0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+    --timeline-dot: #2f81f7;
+    --timeline-line: #d0d7de;
   }
   html[data-theme="dark"] {
     --bg: #0d1117;
@@ -29,6 +31,7 @@
     --brand-soft: #132a44;
     --code-bg: #161b22;
     --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.5);
+    --timeline-line: #30363d;
   }
   * { box-sizing: border-box; }
   body {
@@ -47,64 +50,114 @@
   .hero {
     background: linear-gradient(135deg, #2f81f7 0%, #7c3aed 100%);
     color: #fff;
-    padding: 56px 20px 64px;
+    padding: 48px 20px 56px;
     text-align: center;
   }
-  .hero h1 { margin: 0 0 10px; font-size: 2.4rem; letter-spacing: 1px; }
-  .hero p { margin: 0 auto; max-width: 640px; opacity: .95; font-size: 1.05rem; }
-  .hero .badges { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero h1 { margin: 0 0 10px; font-size: 2.2rem; letter-spacing: 1px; }
+  .hero p { margin: 0 auto; max-width: 600px; opacity: .95; font-size: 1rem; }
+  .hero .badges { margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .hero .badge {
     background: rgba(255,255,255,.18);
     border: 1px solid rgba(255,255,255,.35);
-    padding: 6px 14px; border-radius: 999px; font-size: .85rem; backdrop-filter: blur(4px);
+    padding: 5px 13px; border-radius: 999px; font-size: .82rem; backdrop-filter: blur(4px);
   }
 
-  /* 布局 */
-  .wrap { max-width: 1080px; margin: -32px auto 60px; padding: 0 16px; }
-  .toolbar {
-    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  /* 主布局：左时间轴 + 右内容 */
+  .wrap {
+    max-width: 1200px; margin: -28px auto 60px; padding: 0 20px;
+    display: flex; gap: 22px; align-items: flex-start;
+  }
+
+  /* 左侧时间轴 */
+  .sidebar {
+    width: 300px; flex-shrink: 0;
+    position: sticky; top: 12px;
+  }
+  .sidebar-panel {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow);
+    border-radius: 14px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .sidebar-header {
+    padding: 14px 18px; font-weight: 700; font-size: .95rem;
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+  }
+  .sidebar-body { padding: 10px 14px 16px; max-height: calc(100vh - 160px); overflow-y: auto; }
+
+  /* 时间轴样式 */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px;
+    width: 2px; background: var(--timeline-line); border-radius: 1px;
+  }
+  .tl-item { position: relative; padding-bottom: 18px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot {
+    position: absolute; left: -22px; top: 5px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--brand); border: 2px solid var(--panel); z-index: 1;
+    box-shadow: 0 0 0 2px var(--brand-soft);
+  }
+  .tl-time {
+    font-size: .75rem; color: var(--muted); white-space: nowrap;
+    margin-bottom: 2px;
+  }
+  .tl-msg {
+    font-size: .84rem; line-height: 1.45; word-break: break-all;
+  }
+  .tl-msg a { color: var(--brand); }
+  .tl-hash {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .72rem; color: var(--muted); margin-top: 2px;
+  }
+  .tl-loading { text-align: center; color: var(--muted); padding: 30px 0; font-size: .88rem; }
+  .tl-error { text-align: center; color: var(--muted); padding: 20px 0; font-size: .85rem; }
+
+  /* 右侧主区域 */
+  .main-area { flex: 1; min-width: 0; }
+  .toolbar {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow);
     position: sticky; top: 12px; z-index: 20;
   }
   .search {
-    flex: 1 1 260px; display: flex; align-items: center; gap: 8px;
+    flex: 1 1 200px; display: flex; align-items: center; gap: 8px;
     background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 8px 12px;
+    border-radius: 10px; padding: 7px 11px;
   }
   .search input {
     flex: 1; border: none; outline: none; background: transparent;
-    color: var(--text); font-size: .95rem;
+    color: var(--text); font-size: .92rem;
   }
   .btn {
     border: 1px solid var(--border); background: var(--panel); color: var(--text);
-    padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: .9rem;
-    display: inline-flex; align-items: center; gap: 6px; transition: .15s;
+    padding: 7px 12px; border-radius: 10px; cursor: pointer; font-size: .86rem;
+    display: inline-flex; align-items: center; gap: 5px; transition: .15s;
   }
   .btn:hover { border-color: var(--brand); color: var(--brand); }
-  .count-tip { color: var(--muted); font-size: .85rem; margin-left: auto; }
+  .count-tip { color: var(--muted); font-size: .83rem; margin-left: auto; }
 
   .content {
     background: var(--panel); border: 1px solid var(--border);
-    border-radius: 14px; padding: 32px 36px; margin-top: 16px;
+    border-radius: 14px; padding: 28px 32px; margin-top: 14px;
     box-shadow: var(--shadow); overflow-wrap: break-word;
   }
 
   /* Markdown 渲染样式 */
-  .content h1 { font-size: 1.9rem; border-bottom: 2px solid var(--border); padding-bottom: .3em; margin-top: 0; }
-  .content h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: .3em; margin-top: 2em; }
-  .content h3 { font-size: 1.25rem; margin-top: 1.6em; }
-  .content h4 { font-size: 1.05rem; margin-top: 1.4em; color: var(--brand); }
+  .content h1 { font-size: 1.75rem; border-bottom: 2px solid var(--border); padding-bottom: .3em; margin-top: 0; }
+  .content h2 { font-size: 1.42rem; border-bottom: 1px solid var(--border); padding-bottom: .3em; margin-top: 2em; }
+  .content h3 { font-size: 1.2rem; margin-top: 1.6em; }
+  .content h4 { font-size: 1.02rem; margin-top: 1.4em; color: var(--brand); }
   .content table {
-    border-collapse: collapse; width: 100%; margin: 14px 0; font-size: .92rem;
+    border-collapse: collapse; width: 100%; margin: 14px 0; font-size: .90rem;
     display: block; overflow-x: auto;
   }
-  .content th, .content td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+  .content th, .content td { border: 1px solid var(--border); padding: 7px 11px; text-align: left; }
   .content th { background: var(--brand-soft); font-weight: 600; white-space: nowrap; }
   .content tr:nth-child(2n) td { background: var(--bg); }
   .content code {
     background: var(--code-bg); border: 1px solid var(--border);
-    padding: .15em .4em; border-radius: 6px; font-size: .88em;
+    padding: .15em .4em; border-radius: 6px; font-size: .86em;
     font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   }
   .content pre {
@@ -120,12 +173,21 @@
   .content ul, .content ol { padding-left: 1.5em; }
   tr.row-hidden { display: none; }
 
-  .loading { text-align: center; color: var(--muted); padding: 60px 0; }
-  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 24px 16px 40px; }
+  .loading { text-align: center; color: var(--muted); padding: 50px 0; }
+  footer { text-align: center; color: var(--muted); font-size: .83rem; padding: 20px 16px 36px; }
 
+  /* 移动端响应式 */
+  @media (max-width: 900px) {
+    .wrap { flex-direction: column; }
+    .sidebar { width: 100%; position: static; }
+    .sidebar-panel { max-height: 320px; }
+    .sidebar-body { max-height: 260px; }
+  }
   @media (max-width: 640px) {
-    .hero h1 { font-size: 1.8rem; }
-    .content { padding: 20px 16px; }
+    .hero h1 { font-size: 1.7rem; }
+    .hero { padding: 36px 14px 44px; }
+    .content { padding: 18px 15px; }
+    .wrap { padding: 0 12px; }
   }
 </style>
 </head>
@@ -141,19 +203,34 @@
   </header>
 
   <div class="wrap">
-    <div class="toolbar">
-      <label class="search">
-        🔍
-        <input id="searchInput" type="text" placeholder="搜索脚本名称 / 文件名 / 环境变量…" />
-      </label>
-      <a class="btn" id="repoBtn" href="https://github.com/ZHwin/kuakuaql" target="_blank" rel="noopener">⭐ GitHub 仓库</a>
-      <button class="btn" id="themeBtn" type="button">🌙 深色</button>
-      <span class="count-tip" id="countTip"></span>
-    </div>
+    <!-- 左侧：提交时间轴 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-panel">
+        <div class="sidebar-header">📋 更新记录</div>
+        <div class="sidebar-body">
+          <div class="timeline" id="timeline">
+            <div class="tl-loading">加载中…</div>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-    <article class="content" id="content">
-      <div class="loading">正在加载 README…</div>
-    </article>
+    <!-- 右侧：README 内容 -->
+    <main class="main-area">
+      <div class="toolbar">
+        <label class="search">
+          🔍
+          <input id="searchInput" type="text" placeholder="搜索脚本名称 / 文件名 / 环境变量…" />
+        </label>
+        <a class="btn" href="https://github.com/ZHwin/kuakuaql-docs" target="_blank" rel="noopener">⭐ GitHub</a>
+        <button class="btn" id="themeBtn" type="button">🌙 深色</button>
+        <span class="count-tip" id="countTip"></span>
+      </div>
+
+      <article class="content" id="content">
+        <div class="loading">正在加载 README…</div>
+      </article>
+    </main>
   </div>
 
   <footer>
@@ -161,7 +238,7 @@
   </footer>
 
 <script>
-  // 主题切换
+  // ====== 主题切换 ======
   const themeBtn = document.getElementById('themeBtn');
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark' || (!savedTheme && matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -181,7 +258,60 @@
     }
   });
 
-  // 加载并渲染 README.md
+  // ====== 加载 Git 提交时间轴 ======
+  const REPO = 'ZHwin/kuakuaql-docs';
+  const API = 'https://api.github.com/repos/' + REPO + '/commits?per_page=25';
+  const tlEl = document.getElementById('timeline');
+
+  function timeAgo(dateStr) {
+    const now = Date.now();
+    const d = new Date(dateStr);
+    const diff = now - d.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return '刚刚';
+    if (mins < 60) return mins + ' 分钟前';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + ' 小时前';
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return days + ' 天前';
+    return d.toLocaleDateString('zh-CN', { month:'short', day:'numeric' });
+  }
+
+  function shortHash(h) { return h.slice(0, 7); }
+
+  fetch(API)
+    .then(r => r.json())
+    .then(commits => {
+      if (!commits.length) {
+        tlEl.innerHTML = '<div class="tl-error">暂无记录</div>';
+        return;
+      }
+      let html = '';
+      commits.forEach(c => {
+        const msg = c.commit.message.split('\n')[0];
+        const date = c.commit.author.date;
+        const hash = c.sha;
+        const author = c.commit.author.name;
+        html += '<div class="tl-item">' +
+          '<div class="tl-dot"></div>' +
+          '<div class="tl-time">' + timeAgo(date) + '</div>' +
+          '<div class="tl-msg">' +
+            '<a href="' + c.html_url + '" target="_blank" rel="noopener">' + escapeHtml(msg) + '</a>' +
+          '</div>' +
+          '<div class="tl-hash">' + shortHash(hash) + ' · ' + escapeHtml(author) + '</div>' +
+        '</div>';
+      });
+      tlEl.innerHTML = html;
+    })
+    .catch(() => {
+      tlEl.innerHTML = '<div class="tl-error">加载失败</div>';
+    });
+
+  function escapeHtml(s) {
+    const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+  }
+
+  // ====== 加载并渲染 README.md ======
   const contentEl = document.getElementById('content');
   fetch('README.md?_=' + Date.now())
     .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
@@ -195,7 +325,7 @@
         '）。请确认已通过 GitHub Pages 或本地服务器访问本页面。</div>';
     });
 
-  // 表格行搜索过滤
+  // ====== 表格行搜索过滤 ======
   function initSearch() {
     const input = document.getElementById('searchInput');
     const countTip = document.getElementById('countTip');
