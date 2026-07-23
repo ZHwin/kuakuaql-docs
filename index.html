@@ -258,7 +258,7 @@
     }
   });
 
-  // ====== 加载 Git 提交时间轴（拉取主仓库的提交记录）======
+  // ====== 加载 Git 提交时间轴（优先本地 commits.json，fallback API）======
   const REPO = 'ZHwin/kuakuaql';
   const API = 'https://api.github.com/repos/' + REPO + '/commits?per_page=25';
   const tlEl = document.getElementById('timeline');
@@ -279,32 +279,40 @@
 
   function shortHash(h) { return h.slice(0, 7); }
 
-  fetch(API)
-    .then(r => r.json())
-    .then(commits => {
-      if (!commits.length) {
-        tlEl.innerHTML = '<div class="tl-error">暂无记录</div>';
-        return;
-      }
-      let html = '';
-      commits.forEach(c => {
-        const msg = c.commit.message.split('\n')[0];
-        const date = c.commit.author.date;
-        const hash = c.sha;
-        const author = c.commit.author.name;
-        html += '<div class="tl-item">' +
-          '<div class="tl-dot"></div>' +
-          '<div class="tl-time">' + timeAgo(date) + '</div>' +
-          '<div class="tl-msg">' +
-            '<a href="' + c.html_url + '" target="_blank" rel="noopener">' + escapeHtml(msg) + '</a>' +
-          '</div>' +
-          '<div class="tl-hash">' + shortHash(hash) + ' · ' + escapeHtml(author) + '</div>' +
-        '</div>';
-      });
-      tlEl.innerHTML = html;
-    })
+  function renderTimeline(commits) {
+    if (!commits.length) {
+      tlEl.innerHTML = '<div class="tl-error">暂无记录</div>';
+      return;
+    }
+    let html = '';
+    commits.forEach(c => {
+      const msg = c.message || c.commit?.message?.split('\n')[0] || '(no message)';
+      const date = c.date || c.commit?.author?.date || '';
+      const hash = c.sha || '';
+      const author = c.author || c.commit?.author?.name || '';
+      const url = c.url || c.html_url || ('https://github.com/' + REPO + '/commit/' + hash);
+      html += '<div class="tl-item">' +
+        '<div class="tl-dot"></div>' +
+        '<div class="tl-time">' + timeAgo(date) + '</div>' +
+        '<div class="tl-msg">' +
+          '<a href="' + url + '" target="_blank" rel="noopener">' + escapeHtml(msg) + '</a>' +
+        '</div>' +
+        '<div class="tl-hash">' + shortHash(hash) + ' · ' + escapeHtml(author) + '</div>' +
+      '</div>';
+    });
+    tlEl.innerHTML = html;
+  }
+
+  // 优先加载本地 commits.json（由 GitHub Actions 同步）
+  fetch('commits.json?_=' + Date.now())
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => renderTimeline(Array.isArray(data) ? data : []))
     .catch(() => {
-      tlEl.innerHTML = '<div class="tl-error">加载失败</div>';
+      // fallback: 尝试 GitHub API（仅公开仓库可用）
+      fetch(API)
+        .then(r => r.json())
+        .then(commits => renderTimeline(commits))
+        .catch(() => { tlEl.innerHTML = '<div class="tl-error">暂无记录</div>'; });
     });
 
   function escapeHtml(s) {
