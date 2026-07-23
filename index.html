@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>夸夸签 · 自动签到脚本合集</title>
+<meta name="description" content="130+ 自动签到与任务脚本合集，适用于青龙面板等自动化工具。" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>" />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #f6f8fa;
+    --panel: #ffffff;
+    --text: #1f2328;
+    --muted: #656d76;
+    --border: #d0d7de;
+    --brand: #2f81f7;
+    --brand-soft: #ddf4ff;
+    --code-bg: #f6f8fa;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
+  }
+  html[data-theme="dark"] {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --border: #30363d;
+    --brand: #2f81f7;
+    --brand-soft: #132a44;
+    --code-bg: #161b22;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.5);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--brand); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* 顶部横幅 */
+  .hero {
+    background: linear-gradient(135deg, #2f81f7 0%, #7c3aed 100%);
+    color: #fff;
+    padding: 56px 20px 64px;
+    text-align: center;
+  }
+  .hero h1 { margin: 0 0 10px; font-size: 2.4rem; letter-spacing: 1px; }
+  .hero p { margin: 0 auto; max-width: 640px; opacity: .95; font-size: 1.05rem; }
+  .hero .badges { margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero .badge {
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.35);
+    padding: 6px 14px; border-radius: 999px; font-size: .85rem; backdrop-filter: blur(4px);
+  }
+
+  /* 布局 */
+  .wrap { max-width: 1080px; margin: -32px auto 60px; padding: 0 16px; }
+  .toolbar {
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow);
+    position: sticky; top: 12px; z-index: 20;
+  }
+  .search {
+    flex: 1 1 260px; display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 8px 12px;
+  }
+  .search input {
+    flex: 1; border: none; outline: none; background: transparent;
+    color: var(--text); font-size: .95rem;
+  }
+  .btn {
+    border: 1px solid var(--border); background: var(--panel); color: var(--text);
+    padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: .9rem;
+    display: inline-flex; align-items: center; gap: 6px; transition: .15s;
+  }
+  .btn:hover { border-color: var(--brand); color: var(--brand); }
+  .count-tip { color: var(--muted); font-size: .85rem; margin-left: auto; }
+
+  .content {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 32px 36px; margin-top: 16px;
+    box-shadow: var(--shadow); overflow-wrap: break-word;
+  }
+
+  /* Markdown 渲染样式 */
+  .content h1 { font-size: 1.9rem; border-bottom: 2px solid var(--border); padding-bottom: .3em; margin-top: 0; }
+  .content h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: .3em; margin-top: 2em; }
+  .content h3 { font-size: 1.25rem; margin-top: 1.6em; }
+  .content h4 { font-size: 1.05rem; margin-top: 1.4em; color: var(--brand); }
+  .content table {
+    border-collapse: collapse; width: 100%; margin: 14px 0; font-size: .92rem;
+    display: block; overflow-x: auto;
+  }
+  .content th, .content td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+  .content th { background: var(--brand-soft); font-weight: 600; white-space: nowrap; }
+  .content tr:nth-child(2n) td { background: var(--bg); }
+  .content code {
+    background: var(--code-bg); border: 1px solid var(--border);
+    padding: .15em .4em; border-radius: 6px; font-size: .88em;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  }
+  .content pre {
+    background: var(--code-bg); border: 1px solid var(--border);
+    padding: 16px; border-radius: 10px; overflow-x: auto;
+  }
+  .content pre code { border: none; padding: 0; background: none; }
+  .content blockquote {
+    border-left: 4px solid var(--brand); margin: 14px 0; padding: 4px 16px;
+    color: var(--muted); background: var(--brand-soft); border-radius: 0 8px 8px 0;
+  }
+  .content hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+  .content ul, .content ol { padding-left: 1.5em; }
+  tr.row-hidden { display: none; }
+
+  .loading { text-align: center; color: var(--muted); padding: 60px 0; }
+  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 24px 16px 40px; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.8rem; }
+    .content { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <h1>🎯 夸夸签</h1>
+    <p>自动签到脚本合集 · 130+ 脚本，适用于青龙面板等自动化工具</p>
+    <div class="badges">
+      <span class="badge">📦 JavaScript / Python</span>
+      <span class="badge">🔔 20+ 通知渠道</span>
+      <span class="badge">🐉 青龙面板订阅</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <label class="search">
+        🔍
+        <input id="searchInput" type="text" placeholder="搜索脚本名称 / 文件名 / 环境变量…" />
+      </label>
+      <a class="btn" id="repoBtn" href="https://github.com/ZHwin/kuakuaql" target="_blank" rel="noopener">⭐ GitHub 仓库</a>
+      <button class="btn" id="themeBtn" type="button">🌙 深色</button>
+      <span class="count-tip" id="countTip"></span>
+    </div>
+
+    <article class="content" id="content">
+      <div class="loading">正在加载 README…</div>
+    </article>
+  </div>
+
+  <footer>
+    由 README.md 自动渲染 · 通过 GitHub Pages 托管
+  </footer>
+
+<script>
+  // 主题切换
+  const themeBtn = document.getElementById('themeBtn');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || (!savedTheme && matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    themeBtn.textContent = '☀️ 浅色';
+  }
+  themeBtn.addEventListener('click', () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (dark) {
+      document.documentElement.removeAttribute('data-theme');
+      themeBtn.textContent = '🌙 深色';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      themeBtn.textContent = '☀️ 浅色';
+      localStorage.setItem('theme', 'dark');
+    }
+  });
+
+  // 加载并渲染 README.md
+  const contentEl = document.getElementById('content');
+  fetch('README.md?_=' + Date.now())
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(md => {
+      contentEl.innerHTML = marked.parse(md);
+      initSearch();
+    })
+    .catch(err => {
+      contentEl.innerHTML =
+        '<div class="loading">README.md 加载失败（' + err.message +
+        '）。请确认已通过 GitHub Pages 或本地服务器访问本页面。</div>';
+    });
+
+  // 表格行搜索过滤
+  function initSearch() {
+    const input = document.getElementById('searchInput');
+    const countTip = document.getElementById('countTip');
+    const rows = Array.from(contentEl.querySelectorAll('table tbody tr'));
+    const total = rows.length;
+    countTip.textContent = '共 ' + total + ' 条';
+
+    input.addEventListener('input', () => {
+      const kw = input.value.trim().toLowerCase();
+      let shown = 0;
+      rows.forEach(tr => {
+        const hit = !kw || tr.textContent.toLowerCase().includes(kw);
+        tr.classList.toggle('row-hidden', !hit);
+        if (hit) shown++;
+      });
+      countTip.textContent = kw ? ('匹配 ' + shown + ' / ' + total + ' 条') : ('共 ' + total + ' 条');
+    });
+  }
+</script>
+</body>
+</html>
