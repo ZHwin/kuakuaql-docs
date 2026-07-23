@@ -258,8 +258,8 @@
     }
   });
 
-  // ====== 加载 Git 提交时间轴 ======
-  const REPO = 'ZHwin/kuakuaql-docs';
+  // ====== 加载 Git 提交时间轴（拉取主仓库的提交记录）======
+  const REPO = 'ZHwin/kuakuaql';
   const API = 'https://api.github.com/repos/' + REPO + '/commits?per_page=25';
   const tlEl = document.getElementById('timeline');
 
